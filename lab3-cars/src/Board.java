@@ -5,6 +5,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 
+import static java.lang.System.out;
+
 public class Board extends JComponent implements MouseInputListener, ComponentListener {
     private static final long serialVersionUID = 1L;
     private Point[][] points;
@@ -29,7 +31,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         }
         for (int x = 0; x < points.length; ++x) {
             for (int y = 0; y < points[x].length; ++y) {
-                points[x][y].next = points[(x + 1) % points.length][y];
+                for (int i=0;i<=Point.max_speed;i++) {
+                    points[x][y].next[i] =points[(x + i) % points.length][y];
+                }
             }
         }
     }
@@ -39,6 +43,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         for (int x = 0; x < points.length; ++x) {
             for (int y = 0; y < points[x].length; ++y) {
                 points[x][y].moved = false;
+                points[x][y].updateSpeed();
             }
         }
 
