@@ -1,17 +1,24 @@
 public class Point {
 
-    // TODO
+    public Integer type = 0;
+    public Point next;
+    public Boolean moved = false;
 
     public void move() {
-        // TODO
+        if (type == 1 && next.type == 0 && !moved && !next.moved) {
+            type = 0;
+            next.type = 1;
+            moved = true;
+            next.moved = true;
+        }
     }
 
     public void clicked() {
-        // TODO
+        type = 1;
     }
 
     public void clear() {
-        // TODO
+        type = 0;
     }
 }
 
