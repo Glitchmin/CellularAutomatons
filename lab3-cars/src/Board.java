@@ -10,8 +10,10 @@ import static java.lang.System.out;
 public class Board extends JComponent implements MouseInputListener, ComponentListener {
     private static final long serialVersionUID = 1L;
     private Point[][] points;
-    private int size = 10;
+    private int size = 25;
     public int editType = 0;
+    public int length;
+    public int height;
 
     public Board(int length, int height) {
         addMouseListener(this);
@@ -19,20 +21,27 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         addMouseMotionListener(this);
         setBackground(Color.WHITE);
         setOpaque(true);
+        this.length = length;
+        this.height = height;
     }
 
     private void initialize(int length, int height) {
         points = new Point[length][height];
+        this.length = length;
+        this.height = height;
 
         for (int x = 0; x < points.length; ++x) {
             for (int y = 0; y < points[x].length; ++y) {
-                points[x][y] = new Point();
+                points[x][y] = new Point(5, x, y, this);
+                if (y == 2 || y == 3) {
+                    points[x][y] = new Point(0, x, y - 2, this);
+                }
             }
         }
         for (int x = 0; x < points.length; ++x) {
             for (int y = 0; y < points[x].length; ++y) {
-                for (int i=0;i<=Point.max_speed;i++) {
-                    points[x][y].next[i] =points[(x + i) % points.length][y];
+                for (int i = 0; i <= 7; i++) {
+                    points[x][y].next[i] = points[(x + i) % points.length][y];
                 }
             }
         }
@@ -61,6 +70,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
                 points[x][y].clear();
             }
         this.repaint();
+        initialize(length, height);
     }
 
 
@@ -95,9 +105,22 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         for (x = 0; x < points.length; ++x) {
             for (y = 0; y < points[x].length; ++y) {
                 float a = 1.0F;
-                g.setColor(new Color(0, 0, 0, a));
-                if (points[x][y].type == 0) {
-                    g.setColor(new Color(1.0f, 1.0f, 1.0f, a));
+                switch (points[x][y].type) {
+                    case 0:
+                        g.setColor(new Color(1.0f, 1.0f, 1.0f, a));
+                        break;
+                    case 1:
+                        g.setColor(new Color(1.0f, 1.0f, 0.0f, a));
+                        break;
+                    case 2:
+                        g.setColor(new Color(0.0f, 0.0f, 1.0f, a));
+                        break;
+                    case 3:
+                        g.setColor(new Color(1.0f, 0.0f, 0.0f, a));
+                        break;
+                    case 5:
+                        g.setColor(new Color(0.0f, 1.0f, 0.0f, a));
+                        break;
                 }
 
 
@@ -113,6 +136,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
             if (editType == 0) {
                 points[x][y].clicked();
+            } else {
+                points[x][y].type = editType;
+                points[x][y].speed = Point.speed_from_type[editType];
+                points[x][y].max_speed = Point.speed_from_type[editType];
             }
             this.repaint();
         }
@@ -130,6 +157,10 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         if ((x < points.length) && (x > 0) && (y < points[x].length) && (y > 0)) {
             if (editType == 0) {
                 points[x][y].clicked();
+            } else {
+                points[x][y].type = editType;
+                points[x][y].speed = Point.speed_from_type[editType];
+                points[x][y].max_speed = Point.speed_from_type[editType];
             }
             this.repaint();
         }
@@ -159,4 +190,7 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
     public void mousePressed(MouseEvent e) {
     }
 
+    public Point[][] getPoints() {
+        return points;
+    }
 }
